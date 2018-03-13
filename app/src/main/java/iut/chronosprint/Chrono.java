@@ -1,16 +1,30 @@
 package iut.chronosprint;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Chronometer;
+
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class Chrono extends AppCompatActivity{
+
+    private Chronometer Clock;
+
+    private boolean isStarted;
+
+    private boolean isRunningMode;
+
+    private Timer t;
+
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    public boolean isRunningMode() {
+        return isRunningMode;
+    }
 
     public Chrono(Chronometer c) {
         Clock=c;
@@ -20,40 +34,24 @@ public class Chrono extends AppCompatActivity{
         return Clock;
     }
 
-    private Chronometer Clock;
-
-    public boolean isStarted() {
-        return isStarted;
-    }
-
     public void setStarted(boolean started) {
         isStarted = started;
-    }
-
-    private boolean isStarted;
-
-    public boolean isRunningMode() {
-        return isRunningMode;
     }
 
     public void setRunningMode(boolean runningMode) {
         isRunningMode = runningMode;
     }
 
-    private boolean isRunningMode;
-
-    private Timer t;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timer t= new Timer();
+        t= new Timer();  //BUT WHY?
         Log.i("ChronoActivity","Created");
     }
 
     public void startChrono(){
         isStarted=true;
-        final long delay=1000;
+        final long delay=1000; // BUT WHY?
         Clock.setBase(SystemClock.elapsedRealtime());
         Clock.start();
         //Toast.makeText(getBaseContext(),"GO",
@@ -80,6 +78,9 @@ public class Chrono extends AppCompatActivity{
     }
 
     public void resetChrono(){
-
+        stopChrono();
+        getClock().setBase(SystemClock.elapsedRealtime());
+        getClock().setText(R.string.initTime);
+        MainWindows.message="";
     }
 }

@@ -1,6 +1,5 @@
 package iut.chronosprint;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,17 +25,21 @@ import java.util.Arrays;
 // A FAIRE AVANT TEST : REGLER L'ARRET PAR TOPVALUES
 public class MainWindows extends AppCompatActivity implements View.OnClickListener, SensorEventListener {
 
+    //VIEW
     private Chrono mChrono;
     private Sensor mSensor;
     private Switch mSwitch;
     private Button mStart;
     private Button mStop;
+    private Button mReset;
     private TextView mTest;
     private TextView mSpeed;
+
+    //MODEL
     private float[] topValues = new float[20];
     private int i;
-    private String message;
-    private int emptyCount;
+    public static String message;//DEBUG ONLY
+    //private int emptyCount;
 
     private float amplitude=0;
     private float maxAmp=0f;
@@ -46,47 +49,42 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chrono);
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if(sensorManager !=null) {
             mSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
             int signalPeriod = 50;
             sensorManager.registerListener(this, mSensor, signalPeriod);
         }
+        initView();
+        // Redonne la valeur du chrono au besoin
+        if(savedInstanceState != null){
+            mChrono.getClock().setBase(savedInstanceState.getLong("ChronoTime"));
+            mChrono.setStarted(savedInstanceState.getBoolean("ChronoState", false));
+            if(mChrono.isStarted()) mChrono.getClock().start();
+        }
+    }
 
+    private void initView() {
+        setContentView(R.layout.activity_chrono);
         mChrono=new Chrono((Chronometer)findViewById(R.id.chronometer));
         mStart=findViewById(R.id.start_button);
         mStart.setOnClickListener(this);
         mStop=findViewById(R.id.stop_button);
         mStop.setOnClickListener(this);
-
+        mReset = findViewById(R.id.reset_button);
+        mReset.setOnClickListener(this);
         mTest = findViewById(R.id.test_zone);
         mTest.setText(R.string.mTestInit);
         message=mTest.getText().toString();
         mSpeed=findViewById(R.id.meanSpeed);
-
-
-        Button reset = findViewById(R.id.reset_button);
-        reset.setOnClickListener(this);
         mSwitch=findViewById(R.id.switchRM);
         mSwitch.setOnClickListener(this);
-        // Redonne la valeur du chrono au besoin
-        if(savedInstanceState != null){
-            mChrono.getClock().setBase(savedInstanceState.getLong("ChronoTime"));
-            mChrono.setStarted(savedInstanceState.getBoolean("ChronoState", false));
-            if(mChrono.isStarted()) {
-                mChrono.getClock().start();
-            }
-        }
-
     }
 
 
     @Override
     public void onClick(View v) {
-
         switch(v.getId()) {
-
             case R.id.start_button:
                 if(!mChrono.isStarted())
                 mChrono.startChrono();
@@ -95,27 +93,28 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
                 mChrono.stopChrono();
             break;
             case R.id.reset_button:
-                mChrono.stopChrono();
-                mChrono.getClock().setBase(SystemClock.elapsedRealtime());
-                mChrono.getClock().setText(R.string.initTime);
+                mChrono.resetChrono();
                 TextView mText=findViewById(R.id.test_zone);
-                mText.setText("");
+                mText.setText(MainWindows.message);
                 break;
             case R.id.switchRM:
-                if (mSwitch.isChecked()) {
-                    mChrono.setRunningMode(true);
-                    mStart.setEnabled(false);
-                    mStop.setEnabled(false);
-                } else {
-                    mChrono.setRunningMode(false);
-                    mStart.setEnabled(true);
-                    mStop.setEnabled(true);
-                }
+                switchAction();
                 break;
         }
     }
 
-    @SuppressLint("LongLogTag")
+    private void switchAction() {
+        if (mSwitch.isChecked()) {
+            mChrono.setRunningMode(true);
+            mStart.setEnabled(false);
+            mStop.setEnabled(false);
+        } else {
+            mChrono.setRunningMode(false);
+            mStart.setEnabled(true);
+            mStop.setEnabled(true);
+        }
+    }
+
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(mChrono.isRunningMode()) {
@@ -128,7 +127,7 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
                 mChrono.startChrono();
                 Log.i("Start Time",String.valueOf(Math.abs(movement)));
 
-                int emptyCount = 0;
+               // int emptyCount = 0;
             }
 
 
@@ -148,7 +147,7 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
                 if(Math.abs(movement)>12) emptyCount=0;*/
 
                 /* METHODE AMPLITUDE*/
-                if (Math.abs(movement) > 1 && mChrono.isStarted())  { //Ne s'arrete pas si il n'a pas recu 10 valeurs
+                if (Math.abs(movement) > 1)  { //Ne s'arrete pas si il n'a pas recu 10 valeurs
                     //mTest.setText(mTest.getText()+ Float.toString(movement) + "   " );
                     topValues[i % 20] = movement;
                     if(i%20==0)maxAmp=maxAmp/2;
@@ -190,7 +189,7 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
             }
             else {
                 maxAmp=0;
-                emptyCount=0;
+                //emptyCount=0;
 
             }
         }
@@ -205,6 +204,11 @@ public class MainWindows extends AppCompatActivity implements View.OnClickListen
         return String.valueOf(time/60000)+"'"+String.valueOf((time%60000)/1000)+"\""+String.valueOf(time%1000);
     }
 
+    /**
+     * Inutilisée
+     * @param sensor accelerometre
+     * @param accuracy niveau de precision
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
