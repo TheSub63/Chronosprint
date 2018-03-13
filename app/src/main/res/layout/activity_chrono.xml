@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="iut.chronosprint.MainWindows">
+    <!--
+    Ajouter le switch dans le header? VOir SO : add switch to action bar
+    -->
+    <TextView
+        android:id="@+id/test_zone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@id/reset_button"/>
+
+    <TextView
+        android:id="@+id/meanSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reset_button"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+
+        android:id="@+id/start_button"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_light"
+        android:text="@string/start"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/stop_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chronometer" />
+
+    <Button
+
+        android:id="@+id/stop_button"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_red_dark"
+        android:text="@string/stop"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reset_button"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_button" />
+
+    <Button
+
+        android:id="@+id/reset_button"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:text="@string/reset"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/test_zone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stop_button" />
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="textStart"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/start_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="start" />
+
+    <Switch
+        android:id="@+id/switchRM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/runningmode"
+        app:layout_constraintEnd_toStartOf="parent"
+        />
+
+
+</android.support.constraint.ConstraintLayout>
